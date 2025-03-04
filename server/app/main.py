@@ -1,7 +1,8 @@
 from fastapi import FastAPI
+from app.db.session import get_db
 
 app = FastAPI()
 
 @app.get("/")
-def root():
-    return {"Hello": "World" }
+def home():
+    return {"message": "Blogi API is running!"}
