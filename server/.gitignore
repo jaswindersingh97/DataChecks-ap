@@ -19,3 +19,4 @@ Thumbs.db
 
 # Ignore environment variables (if using .env files for secrets)
 .env
+
