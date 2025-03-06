@@ -20,3 +20,10 @@ Thumbs.db
 # Ignore environment variables (if using .env files for secrets)
 .env
 
+# Ignore Alembic cache
+migrations/__pycache__/
+migrations/versions/__pycache__/
+
+# Ignore SQLite (if used for local dev)
+instance/
+*.db
