@@ -1,12 +1,17 @@
 from pydantic import BaseModel, EmailStr
 
-class UserCreate(BaseModel):
+# Register Request Schema
+class RegisterSchema(BaseModel):
+    name: str
     email: EmailStr
     password: str
 
-class UserResponse(BaseModel):
-    id: int
+# Login Request Schema
+class LoginSchema(BaseModel):
     email: EmailStr
+    password: str
 
-    class Config:
-        from_attributes = True
+# User Response Schema (fetch user)
+class UserResponseSchema(BaseModel):
+    name: str
+    email: str
