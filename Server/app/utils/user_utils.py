@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from app.core.database import get_db
-from app.models import User
+from app.models.User import User
 from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -34,6 +34,7 @@ def create_jwt(data: dict, expires_delta: timedelta = None) -> str:
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload)
         user_id = payload.get("user_id")
         if not user_id:
             raise HTTPException(status_code=401, detail="Invalid token")
