@@ -11,8 +11,9 @@ def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_curre
     db.refresh(new_post)
     return new_post
 
-def get_posts(db: Session):
-    return db.query(Post).all()
+def get_posts(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(Post).offset(skip).limit(limit).all()
+
 
 def get_post(post_id: int, db: Session):
     post = db.query(Post).filter(Post.id == post_id).first()

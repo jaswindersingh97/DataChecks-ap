@@ -14,8 +14,8 @@ def create_new_post(post_data: PostCreateSchema, db: Session = Depends(get_db), 
 
 # Get All Posts
 @post_router.get("/")
-def fetch_posts(db: Session = Depends(get_db)):
-    return get_posts(db)
+def fetch_posts(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
+    return get_posts(db, skip, limit)
 
 # Get Single Post
 @post_router.get("/{post_id}")
