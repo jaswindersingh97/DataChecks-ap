@@ -5,7 +5,6 @@ from app.schemas.user import RegisterSchema, LoginSchema
 from app.utils.user_utils import hash_password, verify_password, create_jwt, get_current_user
 
 def register_user(user_data: RegisterSchema, db: Session):
-    print(user_data)
     existing_user = db.query(User).filter(User.email == user_data.email).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="User already exists")
