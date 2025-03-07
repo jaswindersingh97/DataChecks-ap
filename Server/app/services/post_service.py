@@ -1,11 +1,18 @@
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends,UploadFile
 from sqlalchemy.orm import Session
 from app.models.post import Post
 from app.schemas.post import PostCreateSchema
 from app.utils.user_utils import get_current_user
+from app.utils.cloudinary_utils import upload_image_to_cloudinary
 
-def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_current_user)):
-    new_post = Post(title=post_data.title, content=post_data.content, created_by=user.id)
+def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_current_user), file: UploadFile = None):
+    image_url = upload_image_to_cloudinary(file) if file else None
+    new_post = Post(
+        title=post_data.title, 
+        content=post_data.content, 
+        image_url=image_url,
+        created_by=user.id
+        )
     db.add(new_post)
     db.commit()
     db.refresh(new_post)

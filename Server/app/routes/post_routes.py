@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,UploadFile,File
 from sqlalchemy.orm import Session
 from app.schemas.post import PostCreateSchema, PostResponseSchema
 from app.services.post_service import create_post, get_posts, get_post, update_post, delete_post
@@ -9,8 +9,11 @@ post_router = APIRouter()
 
 # Create Post
 @post_router.post("/", response_model=PostResponseSchema)
-def create_new_post(post_data: PostCreateSchema, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    return create_post(post_data, db, user)
+def create_new_post(post_data: PostCreateSchema,
+                    file: UploadFile = File(None),
+                    db: Session = Depends(get_db),
+                    user=Depends(get_current_user)):
+    return create_post(post_data, db, user,file)
 
 # Get All Posts
 @post_router.get("/")
