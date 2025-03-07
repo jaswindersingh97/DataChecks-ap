@@ -4,6 +4,7 @@ from app.dependencies import setup_cors
 from app.core.database import Base, engine
 from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi.responses import JSONResponse
+from app.routes.post_routes import post_router
 
 import logging
 import sys
@@ -28,23 +29,6 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Internal Server Error"},
     )
 
-# class LoggingMiddleware(BaseHTTPMiddleware):
-#     async def dispatch(self, request: Request, call_next):
-#         print(f"📌 Incoming request: {request.method} {request.url}")  # Explicit console print
-#         logger.info(f"📌 Incoming request: {request.method} {request.url}")
-        
-#         response = await call_next(request)
-
-#         print(f"✅ Response status: {response.status_code}")  # Explicit console print
-#         logger.info(f"✅ Response status: {response.status_code}")
-        
-#         return response
-
-# app.add_middleware(LoggingMiddleware)
-
-
-# app = FastAPI()
-
 # Apply CORS middleware
 setup_cors(app)
 
@@ -52,7 +36,9 @@ setup_cors(app)
 Base.metadata.create_all(bind=engine)
 
 # Include routes
-app.include_router(user_router)
+# app.include_router(user_router)
+app.include_router(user_router, prefix="/users", tags=["Users"])
+app.include_router(post_router, prefix="/posts", tags=["Posts"])
 
 @app.get("/")
 def read_root():

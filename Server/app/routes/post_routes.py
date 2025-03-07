@@ -1,28 +1,33 @@
-from fastapi import HTTPException, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.models.User import User
+from app.schemas.post import PostCreateSchema, PostResponseSchema
+from app.services.post_service import create_post, get_posts, get_post, update_post, delete_post
+from app.utils.user_utils import get_current_user
+from app.core.database import get_db
 
-from app.schemas.user import RegisterSchema, LoginSchema
-from app.utils.user_utils import hash_password, verify_password, create_jwt, get_current_user
+post_router = APIRouter()
 
-def create_post(user_data: RegisterSchema, db: Session):
-    print(user_data)
-    existing_user = db.query(User).filter(User.email == user_data.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="User already exists")
+# Create Post
+@post_router.post("/", response_model=PostResponseSchema)
+def create_new_post(post_data: PostCreateSchema, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    return create_post(post_data, db, user)
 
-    hashed_pwd = hash_password(user_data.password)
-    new_user = User(name=user_data.name, email=user_data.email, hashed_password=hashed_pwd)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+# Get All Posts
+@post_router.get("/")
+def fetch_posts(db: Session = Depends(get_db)):
+    return get_posts(db)
 
-    return {"message": "User created", "id": new_user.id, "name": new_user.name, "email": new_user.email}
+# Get Single Post
+@post_router.get("/{post_id}")
+def fetch_post(post_id: int, db: Session = Depends(get_db)):
+    return get_post(post_id, db)
 
-def login_user(credentials: LoginSchema, db: Session):
-    user = db.query(User).filter(User.email == credentials.email).first()
-    if not user or not verify_password(credentials.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+# Update Post
+@post_router.put("/{post_id}")
+def modify_post(post_id: int, post_data: PostCreateSchema, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    return update_post(post_id, post_data, db, user)
 
-    token = create_jwt({"user_id": user.id})
-    return {"message": "Login successful", "access_token": token}
+# Delete Post
+@post_router.delete("/{post_id}")
+def remove_post(post_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    return delete_post(post_id, db, user)
