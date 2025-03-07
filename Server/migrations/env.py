@@ -6,7 +6,7 @@ from alembic import context
 from dotenv import load_dotenv
 from app.core.database import Base  # Update this based on your project
 
-from app.models import user
+from app.models import User
 from app.models import post
 
 # Load environment variables
