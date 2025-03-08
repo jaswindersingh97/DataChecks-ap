@@ -4,7 +4,7 @@ import Api from "../../Api/Api";
 import imagePlaceholder from "./../../assets/image.png";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { useUser } from "../../context/userContext";
+import { useUser } from "../../context/UserContext";
 import PostForm from "../../components/PostForm/PostForm";
 import { toast } from "react-toastify";
 function PostsPage() {
