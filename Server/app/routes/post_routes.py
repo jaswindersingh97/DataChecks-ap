@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException,UploadFile,File,Form
+from fastapi import APIRouter, Depends, HTTPException,UploadFile,File,Form, Query
 from sqlalchemy.orm import Session
 from app.schemas.post import PostCreateSchema, PostResponseSchema
-from app.services.post_service import create_post, get_posts, get_post, update_post, delete_post
+from app.services.post_service import create_post, get_posts, get_post, update_post, delete_post, search_posts_by_keyword
 from app.utils.user_utils import get_current_user
 from app.core.database import get_db
 
@@ -25,6 +25,16 @@ def create_new_post(
 @post_router.get("/")
 def fetch_posts(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
     return get_posts(db, skip, limit)
+
+# Search Post
+@post_router.get("/search", response_model=list[PostResponseSchema])
+def search_posts(
+    keyword: str = Query(..., description="Search keyword for title or content"),
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db)
+):
+    return search_posts_by_keyword(db, keyword, skip, limit)
 
 # Get Single Post
 @post_router.get("/{post_id}")

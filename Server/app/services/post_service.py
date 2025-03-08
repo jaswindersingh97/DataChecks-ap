@@ -1,5 +1,5 @@
 from fastapi import HTTPException, Depends,UploadFile
-from sqlalchemy import desc
+from sqlalchemy import desc,or_
 from sqlalchemy.orm import Session
 from app.models.post import Post
 from app.schemas.post import PostCreateSchema
@@ -54,3 +54,17 @@ def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Dep
     db.commit()
     db.refresh(post)
     return post
+
+def search_posts_by_keyword(db: Session, keyword: str, skip: int = 0, limit: int = 10):
+    # Use SQLAlchemy's `or_` to search in both title and content
+    query = db.query(Post).filter(
+        or_(
+            Post.title.ilike(f"%{keyword}%"),  # Case-insensitive search in title
+            Post.content.ilike(f"%{keyword}%")  # Case-insensitive search in content
+        )
+    )
+    
+    # Apply pagination
+    posts = query.offset(skip).limit(limit).all()
+    
+    return posts
