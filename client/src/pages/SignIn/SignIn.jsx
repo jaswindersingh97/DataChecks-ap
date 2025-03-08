@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import Api from './../../Api/Api'
 import AuthLayout from '../../components/AuthPageLayout/AuthPageLayout';
 function SignIn() {
-    const from = "Posts";
+    const from = "posts";
     const formFields = [
         {
           name: "email",
