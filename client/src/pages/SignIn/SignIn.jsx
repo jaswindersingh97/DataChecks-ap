@@ -40,9 +40,9 @@ function SignIn() {
         
   return (
     <>
-      <h1 className='font-bold'>SignIn Page</h1>
+      <h1 className='font-bold text-2xl self-center'>SignIn Page</h1>
       <Form fields={formFields} onSubmit={handleSubmit} buttonLabel={"Log In"}/>
-       <p>Don’t have an account? <mark><Link to={"/register"}>Register now</Link></mark></p>
+       <p className='py-2' >Don’t have an account? <span className='underline text-blue-500'><Link to={"/register"}>Register now</Link></span></p>
     </>
   )
 }

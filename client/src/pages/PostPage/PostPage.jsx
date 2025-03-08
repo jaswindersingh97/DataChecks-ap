@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Api from '../../Api/Api';
-import imagePlaceholder from './../../assets/Image-not-found.png'
+import imagePlaceholder from "./../../assets/image.png";
+
 
 function PostPage() {
     const {postId} = useParams();
@@ -31,7 +32,7 @@ const BlogPost = ({ image, CardTitle, date, PostedBy, CardDescription }) => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Post Image */}
         <div className="w-full h-64 md:h-96 rounded-lg overflow-hidden mb-6">
-          <img src={image} alt={CardTitle} className="w-full h-full object-cover" />
+          <img src={image?image:imagePlaceholder} alt={CardTitle} className="w-full h-full object-cover" />
         </div>
   
         {/* Post Content */}
@@ -78,7 +79,9 @@ const BlogPostSkeleton = () => {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-pulse">
         {/* Skeleton Image */}
-        <div className="w-full h-64 md:h-96 rounded-lg bg-gray-300 dark:bg-gray-700 mb-6"></div>
+        <div className="w-full h-64 md:h-96 rounded-lg bg-gray-300 dark:bg-gray-700 mb-6">
+          <img src={imagePlaceholder}  className="w-full rounded-lg h-full object-cover" />
+        </div>
   
         {/* Skeleton Content */}
         <article>

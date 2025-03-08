@@ -4,7 +4,6 @@ import Api from "../../Api/Api";
 import imagePlaceholder from "./../../assets/image.png";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import NavBar from "../../components/NavBar/NavBar";
 import { useUser } from "../../context/userContext";
 import PostForm from "../../components/PostForm/PostForm";
 import { toast } from "react-toastify";
@@ -18,7 +17,7 @@ function PostsPage() {
   const navigate = useNavigate();
   const [modalForm,setModalForm] = useState(null);
   const [modal, setModal] = useState(false);
-
+  const [stopLoadMore,setStopLoadMore] = useState(false);
  
 
   const CreatePost = async(values) =>{
@@ -153,6 +152,9 @@ function PostsPage() {
         endpoint: `/posts?skip=${currentSkip}&limit=10`,
         method: "get",
       });
+      if(response.data.length==0){
+        setStopLoadMore(true)
+      }
       setData((prevData) => [...prevData, ...response.data]);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -175,7 +177,6 @@ function PostsPage() {
 
   return (
     <>
-      <NavBar/>
       <section className="bg-white p-10 pb-10 pt-20 lg:pb-20 lg:pt-[120px]">
         <div className="container">
           <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
@@ -221,12 +222,12 @@ function PostsPage() {
           {modalForm}
           </Modal>
             <div className="w-full text-center">
-          <button 
+          {!stopLoadMore && <button 
           className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none  dark:focus:ring-blue-800 cursor-pointer ${loading && 'bg-gray-500 hover:bg-gray-500 cursor-progress'}`} 
           onClick={fetchMore} 
           disabled={loading}>
             {loading ? "Loading..." : "Load More"}
-          </button>
+          </button>}
           </div>
         </div>
       </section>

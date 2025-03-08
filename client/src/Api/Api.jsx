@@ -35,7 +35,7 @@ const Api = async ({ endpoint, method = 'GET', data = {}, headers = {},includeTo
             } else {
                 // Handle other errors (e.g., 400, 404, etc.)
                 console.log(error.response.data.detail)
-                toast.error(error.response.data.message ||error.response.data.error || error.response.data || "An error occurred!");
+                toast.error(error.response.data.message ||error.response.data.error || error.response.data.detail || "An error occurred!");
             }
             return error.response;
         } else if (error.request) {

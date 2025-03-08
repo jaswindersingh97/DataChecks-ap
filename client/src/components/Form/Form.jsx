@@ -59,7 +59,7 @@ const Form = ({ fields, onSubmit, buttonLabel }) => {
             value={formValues[field.name]}
             onChange={handleChange}
             placeholder={field.placeholder}
-            className="w-full p-2 bg-inherit rounded-lg border border-white/50 text-gray-600"
+            className="w-full p-2 bg-inherit rounded-lg border  text-gray-600"
           />
           {errors[field.name] && (
             <span className="text-red-500 text-xs mt-1">{errors[field.name]}</span>

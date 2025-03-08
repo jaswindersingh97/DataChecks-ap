@@ -46,9 +46,9 @@ function Register() {
         
   return (
     <>
-      <h1 className='font-bold'>Register Page</h1>
+      <h1 className='font-bold text-2xl self-center'>Register Page</h1>
       <Form fields={formFields} onSubmit={handleSubmit} buttonLabel={"Register"}/>
-       <p>Don’t have an account? <mark><Link to={"/signIn"}>SignIn now</Link></mark></p>
+       <p className='py-2' >Don’t have an account? <span className='underline text-blue-500'><Link to={"/signIn"}>SignIn now</Link></span></p>
     </>
   )
 }
