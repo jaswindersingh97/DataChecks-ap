@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
-const PostForm = ({ initialValues = {}, onSubmit }) => {
+const PostForm = ({ initialValues = {}, onSubmit  }) => {
+    const [loading,setLoading] = useState(false)
     const [formData, setFormData] = useState({
         title: initialValues.title || "",
         content: initialValues.content || "",
@@ -25,15 +26,21 @@ const PostForm = ({ initialValues = {}, onSubmit }) => {
         setFormData({ ...formData, photo: e.target.files[0] });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
         if (validate()) {
-            onSubmit(formData);
+            setLoading(true)
+            await onSubmit(formData);
+            setLoading(false)
+            setFormData({
+                    title: "",
+                    content:  "",
+                    photo: null,})
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md">
+        <form aria-disabled={loading} onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md">
             <div className="mb-4">
                 <label className="block text-gray-700 font-bold mb-2">Title</label>
                 <input
@@ -62,7 +69,7 @@ const PostForm = ({ initialValues = {}, onSubmit }) => {
                 <input type="file" accept="image/*" onChange={handleFileChange} className="w-full p-2 border rounded" />
             </div>
 
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            <button disabled={loading} type="submit" className={` bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${loading? 'bg-gray-500 hover:bg-gray-700 cursor-no-drop':"cursor-pointer"}` }>
                 {initialValues.title ? "Update Post" : "Create Post"}
             </button>
         </form>

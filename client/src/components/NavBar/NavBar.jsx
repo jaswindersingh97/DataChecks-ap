@@ -13,7 +13,6 @@ function NavBar() {
                 method: 'get',
                 includeToken: true
             });
-            console.log(response.data);
             setUser(response.data);
         } catch (error) {
             console.error("Error fetching user:", error);
@@ -22,9 +21,6 @@ function NavBar() {
 
     useEffect(() => {
         fetchUser();
-        return () => {
-            console.log("Cleanup on unmount");
-        };
     }, []);
 
     return (

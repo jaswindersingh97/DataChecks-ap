@@ -19,10 +19,7 @@ function PostsPage() {
   const [modalForm,setModalForm] = useState(null);
   const [modal, setModal] = useState(false);
 
-  const openEditModal = (e)=>{
-    e.stopPropagation();
-
-  }
+ 
 
   const CreatePost = async(values) =>{
     try {
@@ -31,7 +28,7 @@ function PostsPage() {
     formData.append("title", values.title);
     formData.append("content", values.content);
     if (values.photo) {
-      formData.append("photo", values.photo);
+      formData.append("file", values.photo);
     }
 
     const response =await Api({
@@ -41,10 +38,16 @@ function PostsPage() {
       headers:{ "Content-Type": "multipart/form-data" },
       data:formData
     })
-    console.log(response.data)
-    setData((prevData)=>([response.data,...prevData]))
-    setModalForm(null)
-    setModal(false)
+    if(response.status == 201 || 200){
+      setData((prevData)=>([response.data,...prevData]))
+      setModalForm(null)
+      setModal(false)
+      toast.success("post created successfully")
+    }
+    else{
+      toast.error("something went wrong");
+    }
+    
   }
     catch(error){
       console.log(error)
@@ -61,6 +64,87 @@ function PostsPage() {
     )
     setModal(true)
   }
+  const updatePost = (id) => async (values) => {
+    try {
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("content", values.content);
+      if (values.photo) {
+        formData.append("file", values.photo);
+      }
+  
+      const response = await Api({
+        endpoint: `/posts/${id}`,
+        method: "put",
+        includeToken: true,
+        headers: { "Content-Type": "multipart/form-data" },
+        data: formData,
+      });
+      if(response.status== 200){
+        setData((prevData) => [
+          response.data,
+          ...prevData.filter((item) => item.id !== id),
+        ]);
+        setModalForm(null);
+        setModal(false);
+        toast.success("post updated successfully")
+      }
+      
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
+  
+  const openEditModal = ({id, title, content, photo}) => (e) => {
+    e.stopPropagation();
+    setModalForm(
+      <>
+        <h1>Edit Post</h1>
+        <PostForm onSubmit={updatePost(id)} initialValues={{ title, content, photo }} />
+      </>
+    );
+    setModal(true);
+  };
+  const deleteitem = async(id) =>{
+    const response = await Api({
+      endpoint:`/posts/${id}`,
+      method:'delete',
+      includeToken:true
+    })
+    if(response.status == 200){
+      setData((prevData)=>(prevData.filter((item)=>(item.id != id))))
+      toast.success("item deleted successfully")
+      setModalForm(null)
+      setModal(false)
+    }
+    else{
+      toast.error("Something went wrong")
+    }
+  }
+  const openDeleteModal = (id) =>{
+    setModalForm(
+      <form onSubmit={(e)=>{
+        e.preventDefault()
+        deleteitem(id)}} className="p-4 bg-white rounded-lg shadow-lg space-y-4">
+        <h1 className="text-xl font-semibold text-gray-800">Delete</h1>
+        <p className="text-gray-600">Are you sure you want to delete this item?</p>
+        <div className="flex justify-end gap-4">
+          <button type="submit" className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+            Yes
+          </button>
+          <button onClick={()=>{
+            setModalForm(null)
+            setModal(false)
+          }} type="button" className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition">
+            Cancel
+          </button>
+        </div>
+      </form>
+    )
+    setModal(true)
+  }
+  
   const fetchData = async (currentSkip) => {
     if (loading) return;
     setLoading(true);
@@ -116,9 +200,12 @@ function PostsPage() {
                   date={item.created_at}
                   CardTitle={item.title}
                   CardDescription={item.content}
+                  id={item.id}
                   key={item.id}
                   userId={user.id}
                   created_by={item.created_by}
+                  openEditModal={openEditModal}
+                  openDeleteModal={openDeleteModal}
                 />
               ))
             ) : (
@@ -149,7 +236,7 @@ function PostsPage() {
 
 
 
-const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author ,userId,created_by}) => {
+const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author ,userId,created_by ,id,openEditModal,openDeleteModal}) => {
     const formatDate = (dateString) => {
       if (!dateString) return "Unknown date";
       return new Intl.DateTimeFormat("en-US", {
@@ -183,10 +270,12 @@ const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author ,u
               )}
               {(userId== created_by) &&
               <span className='self-end'>
-              <button type="button" className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 cursor-pointer">
+              <button onClick={openEditModal({title:CardTitle,id:id,content:CardDescription,photo:image})} type="button" className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 cursor-pointer">
                 Edit
               </button>
-              <button type="button" className="px-4 py-2 text-sm text-red-500 font-medium  bg-white border rounded-e-lg  border-gray-200 hover:bg-gray-100 cursor-pointer ">
+              <button onClick={(e)=>{
+                e.stopPropagation()
+                openDeleteModal(id)}} type="button" className="px-4 py-2 text-sm text-red-500 font-medium  bg-white border rounded-e-lg  border-gray-200 hover:bg-gray-100 cursor-pointer ">
                 Delete
               </button>
               </span>  }
