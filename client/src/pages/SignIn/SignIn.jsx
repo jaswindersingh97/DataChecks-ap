@@ -4,10 +4,8 @@ import Form from '../../components/Form/Form';
 import { Link } from 'react-router-dom';
 import Api from './../../Api/Api'
 import AuthLayout from '../../components/AuthPageLayout/AuthPageLayout';
-import Loading from './../../assets/Loading.gif'
 function SignIn() {
     const from = "Posts";
-    const [loading,setLoading] = useState(false)
     const formFields = [
         {
           name: "email",
@@ -27,13 +25,11 @@ function SignIn() {
         },
       ];
       const handleSubmit = async(data) => {
-        setLoading(true);
         const response =await Api({
           endpoint: "/users/login",
           method: "POST",
           data,
         });
-        setLoading(false);
         if(response.status === 200){
           console.log(response.data)
           localStorage.setItem("token",response.data.access_token);
@@ -47,7 +43,6 @@ function SignIn() {
       <h1 className='font-bold'>SignIn Page</h1>
       <Form fields={formFields} onSubmit={handleSubmit} buttonLabel={"Log In"}/>
        <p>Don’t have an account? <mark><Link to={"/register"}>Register now</Link></mark></p>
-       {loading?<div style={{alignSelf:'center'}}> <img src={Loading} className='loading' alt="loading"/></div> : null}
     </>
   )
 }
