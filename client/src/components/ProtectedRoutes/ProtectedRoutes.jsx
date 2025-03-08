@@ -11,7 +11,7 @@ const ProtectedRoutes = ({ element, isPublic = false }) => {
     }
 
     if (!isPublic && !token) {
-        return <Navigate to="/signIn" state={{ from: location }} replace />;
+        return <Navigate to="/signin" replace />;
     }
 
     return <>{element}</>;
