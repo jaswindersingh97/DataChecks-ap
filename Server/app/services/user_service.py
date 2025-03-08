@@ -20,7 +20,7 @@ def register_user(user_data: RegisterSchema, db: Session):
 def login_user(credentials: LoginSchema, db: Session):
     user = db.query(User).filter(User.email == credentials.email).first()
     if not user or not verify_password(credentials.password, user.hashed_password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(status_code=404, detail="Invalid credentials")
 
     token = create_jwt({"user_id": user.id})
     return {"message": "Login successful", "access_token": token}

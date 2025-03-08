@@ -34,7 +34,8 @@ const Api = async ({ endpoint, method = 'GET', data = {}, headers = {},includeTo
                 window.location.href = '/signIn';  // Redirect to login page
             } else {
                 // Handle other errors (e.g., 400, 404, etc.)
-                toast.error(error.response.data.message ||error.response.data.error || "An error occurred!");
+                console.log(error.response.data.detail)
+                toast.error(error.response.data.message ||error.response.data.error || error.response.data || "An error occurred!");
             }
             return error.response;
         } else if (error.request) {

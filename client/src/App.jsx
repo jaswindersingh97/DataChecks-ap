@@ -4,8 +4,11 @@ import SignIn from './pages/SignIn/SignIn'
 import Register from './pages/Register/Register'
 import PostsPage from './pages/PostsPage/PostsPage'
 import PostPage from './pages/PostPage/PostPage'
+import { ToastContainer } from 'react-toastify'
 function App() {
   return (
+    <>
+    <ToastContainer/>
     <BrowserRouter>
       <Routes>
         <Route path='/SignIn' element={<SignIn/>} />
@@ -14,6 +17,8 @@ function App() {
         <Route path='/Posts/:postId' element={<PostPage/>}/>
       </Routes>
     </BrowserRouter>
+    </>
+
   )
 }
 
