@@ -6,6 +6,7 @@ from app.utils.user_utils import get_current_user
 from app.utils.cloudinary_utils import upload_image_to_cloudinary
 
 def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_current_user), file: UploadFile = None):
+    # print(post_data,"postdata")
     image_url = upload_image_to_cloudinary(file) if file else None
     new_post = Post(
         title=post_data.title, 

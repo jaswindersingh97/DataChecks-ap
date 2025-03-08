@@ -4,7 +4,7 @@ from typing import Optional
 class PostCreateSchema(BaseModel):
     title: str
     content: str
-    image_url: Optional[str] = None  # Optional image URL
+    #image_url: Optional[str] = None  # Optional image URL
 
 
 class PostResponseSchema(BaseModel):

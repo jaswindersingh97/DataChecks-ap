@@ -13,6 +13,7 @@ def create_new_post(post_data: PostCreateSchema,
                     file: UploadFile = File(None),
                     db: Session = Depends(get_db),
                     user=Depends(get_current_user)):
+    print(post_data)
     return create_post(post_data, db, user,file)
 
 # Get All Posts
