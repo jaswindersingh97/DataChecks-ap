@@ -1,4 +1,5 @@
 from fastapi import HTTPException, Depends,UploadFile
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from app.models.post import Post
 from app.schemas.post import PostCreateSchema
@@ -20,8 +21,7 @@ def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_curre
     return new_post
 
 def get_posts(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Post).offset(skip).limit(limit).all()
-
+    return db.query(Post).order_by(desc(Post.created_at)).offset(skip).limit(limit).all()
 
 def get_post(post_id: int, db: Session):
     post = db.query(Post).filter(Post.id == post_id).first()
@@ -47,9 +47,7 @@ def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Dep
     post.title = post_data.title
     post.content = post_data.content
     if file:
-        print("File received:", file.filename)
         new_image_url = upload_image_to_cloudinary(file)
-        print("New image URL:", new_image_url)    
         if post.image_url:
             pass  
         post.image_url = new_image_url
