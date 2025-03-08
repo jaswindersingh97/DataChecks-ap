@@ -4,13 +4,15 @@ import Form from '../../components/Form/Form';
 import { Link } from 'react-router-dom';
 import Api from './../../Api/Api'
 import AuthLayout from '../../components/AuthPageLayout/AuthPageLayout';
+import Loading from './../../assets/Loading.gif'
 function SignIn() {
+    const from = location.state?.from?.pathname || `/workspace`;
     const [loading,setLoading] = useState(false)
     const formFields = [
         {
-          name: "UserName",
-          label: "UserName",
-          type: "text",
+          name: "email",
+          label: "Email",
+          type: "email",
           required: true,
           validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
           errorMessage: "Please enter a valid email address",
@@ -27,7 +29,7 @@ function SignIn() {
       const handleSubmit = async(data) => {
         setLoading(true);
         const response =await Api({
-          endpoint: "/login",
+          endpoint: "/users/login",
           method: "POST",
           data,
         });
