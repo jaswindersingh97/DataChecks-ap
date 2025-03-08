@@ -1,67 +1,92 @@
-import React, { useEffect, useState } from 'react'
-import Modal from '../../components/Modal/Modal';
-import Api from '../../Api/Api';
-import imagePlaceholder from './../../assets/image.png'
-import {  useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from "react";
+import Modal from "../../components/Modal/Modal";
+import Api from "../../Api/Api";
+import imagePlaceholder from "./../../assets/image.png";
+import { useNavigate } from "react-router-dom";
+import SearchBar from "../../components/SearchBar/SearchBar";
+
 function PostsPage() {
-  const dummy = [1,2,3];
-  const [data,setData] = useState([]);
-  const skip = 0;
-  const limit = 10;
+  const dummy = [1, 2, 3];
+  const [data, setData] = useState([]);
+  const [skip, setSkip] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const isFirstRender = useRef(true);
   const navigate = useNavigate();
-  const fetchData = async() =>{
-    const response = await Api({
-      endpoint:`/posts?skip=${skip}&limit=${limit}`,
-      method:'get',
-    })
-    console.log(response.data)
-    setData(response.data)
-  }
-  useEffect(()=>{
-    fetchData()
-  },[])
-    const [modal,setModal] =useState(false);
+
+  const fetchData = async (currentSkip) => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const response = await Api({
+        endpoint: `/posts?skip=${currentSkip}&limit=10`,
+        method: "get",
+      });
+      setData((prevData) => [...prevData, ...response.data]);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    fetchData(skip);
+  }, [skip]);
+
+  const fetchMore = () => {
+    setSkip((prevSkip) => prevSkip + 10); // Trigger re-fetch via useEffect
+  };
+
+  const [modal, setModal] = useState(false);
   return (
     <>
       <section className="bg-white p-10 pb-10 pt-20 dark:bg-dark lg:pb-20 lg:pt-[120px]">
-        <div className="container ">
-          <div className="-mx-4 flex flex-wrap">
-            <div className="w-full px-4">
-              <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
-                <span className="mb-2 block text-lg font-semibold text-primary">
-                  Our Blogs
-                </span>
-                <h2 className="mb-4 text-3xl font-bold text-dark dark:text-white sm:text-4xl md:text-[40px]">
-                  Our Recent News
-                </h2>
-                <p className="text-base text-body-color dark:text-dark-6">
-                  There are many variations of passages of Lorem Ipsum available
-                  but the majority have suffered alteration in some form.
-                </p>
-              </div>
-            </div>
+        <div className="container">
+          <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
+            <h2 className="mb-4 text-3xl font-bold text-dark dark:text-white sm:text-4xl md:text-[40px]">
+            Our Blogs
+            </h2>
+            <SearchBar/>
+          </div>
+          <div className="-mx-4 p-5 flex flex-wrap">
+            {data?.length > 0 ? (
+              data.map((item, index) => (
+                <BlogCard
+                  onClick={() => navigate(`${item.id}`)}
+                  author={item.author}
+                  image={item.image_url}
+                  date={item.created_at}
+                  CardTitle={item.title}
+                  CardDescription={item.content}
+                  key={item.id}
+                />
+              ))
+            ) : (
+              <>
+                {dummy.map((item) => (
+                  <Skeleton key={item} />
+                ))}
+              </>
+            )}
           </div>
 
-          <div className="-mx-4 p-5 flex flex-wrap">
-          {data?.length>0 ?data.map((item,index)=>(
-            <BlogCard onClick={()=>navigate(`${item.id}`)} author={item.author} image={item.image_url} date={item.created_at} CardTitle={item.title} CardDescription={item.content} key={item.id}/>
-          )):(
-            <>
-            {dummy.map((item)=>(
-              <Skeleton key={item}/>
-            ))}</>
-          )
-          }
-          </div>
-        <button onClick={()=>setModal((prev)=>(!prev))}>openmodal</button>
-        <Modal isOpen={modal} onClose={()=>setModal(false)} >
-            InsideModal
-        </Modal>
+          <button onClick={() => setModal((prev) => !prev)}>open modal</button>
+          <Modal isOpen={modal} onClose={() => setModal(false)}>
+            Inside Modal
+          </Modal>
+
+          <button onClick={fetchMore} disabled={loading}>
+            {loading ? "Loading..." : "Load More"}
+          </button>
         </div>
       </section>
     </>
   );
-};
+}
 
 
 
@@ -75,10 +100,18 @@ const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author })
       }).format(new Date(dateString));
     };
   
+    const truncatedDescription = CardDescription?.length > 100 
+      ? `${CardDescription.slice(0, 100)}...` 
+      : CardDescription;
+
+    const truncatedTitle = CardTitle?.length > 100 
+      ? `${CardTitle.slice(0, 100)}...` 
+      : CardTitle;
+    
     return (
       <>
         <div onClick={onClick} className="w-full px-10 md:w-1/2 lg:w-1/3">
-          <div className="mb-10 rounded-xl cursor-pointer  hover:bg-gray-200 p-4  w-full">
+          <div title={CardTitle} className="mb-10 rounded-xl cursor-pointer  hover:bg-gray-200 p-4  w-full">
             <div className="mb-8 overflow-hidden rounded">
               <img src={image ? image : imagePlaceholder} alt="" className="w-full h-60" />
             </div>
@@ -89,8 +122,8 @@ const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author })
                 </span>
               )}
               <div className='flex gap-2 items-center'>
-                <h1 className='mb-1 text-l font-medium text-gray-900 dark:text-white'>{author.name}</h1>
-                <h1 className='mb-1 text-l font-medium text-sky-900 underline dark:text-white'>{author.email}</h1>
+                <h1 className='mb-1 text-l font-medium text-gray-900 dark:text-white'>{author?.name}</h1>
+                <h1 className='mb-1 text-l font-medium text-sky-900 underline dark:text-white'>{author?.email}</h1>
 
               </div>
               <h3>
@@ -98,11 +131,11 @@ const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author })
                   href="/#"
                   className="mb-4 inline-block text-xl font-semibold text-dark hover:text-primary dark:text-white sm:text-2xl lg:text-xl xl:text-2xl"
                 >
-                  {CardTitle}
+                  {truncatedTitle}
                 </a>
               </h3>
               <p className="text-base text-body-color dark:text-dark-6">
-                {CardDescription}
+                {truncatedDescription}
               </p>
             </div>
           </div>
