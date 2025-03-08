@@ -36,7 +36,7 @@ function Register() {
       const handleSubmit = async(data) => {
         setLoading(true);
         const response =await Api({
-          endpoint: "/login",
+          endpoint: "/users/register",
           method: "POST",
           data,
         });
@@ -45,7 +45,6 @@ function Register() {
           localStorage.setItem("token",response.data.token);
           localStorage.setItem("id", response.data.id);
           toast.success("Registered Succesfully");
-          window.location.href = from;
         }
       };
         

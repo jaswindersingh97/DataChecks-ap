@@ -1,7 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from '../../components/Modal/Modal';
+import Api from '../../Api/Api';
 function PostsPage() {
   const dummy = [1,2,3];
+  const [datas,setData] = useState([]);
+  const fetchData = async() =>{
+    const response = await Api({
+      endpoint:""
+    })
+  }
+  useEffect(()=>{
+
+  },[])
     const data = [
         {
         date:"Dec 22, 2023",

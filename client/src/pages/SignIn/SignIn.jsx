@@ -6,7 +6,7 @@ import Api from './../../Api/Api'
 import AuthLayout from '../../components/AuthPageLayout/AuthPageLayout';
 import Loading from './../../assets/Loading.gif'
 function SignIn() {
-    const from = location.state?.from?.pathname || `/workspace`;
+    const from = "Posts";
     const [loading,setLoading] = useState(false)
     const formFields = [
         {
@@ -35,8 +35,8 @@ function SignIn() {
         });
         setLoading(false);
         if(response.status === 200){
-          localStorage.setItem("token",response.data.token);
-          localStorage.setItem("id", response.data.id);
+          console.log(response.data)
+          localStorage.setItem("token",response.data.access_token);
           toast.success("logged-in Succesfully");
           window.location.href = from;
         }
