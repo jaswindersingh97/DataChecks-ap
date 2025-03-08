@@ -1,5 +1,5 @@
 import React from 'react'
-import { UserProvider } from './userContext'
+import { UserProvider } from './UserContext'
 function AppProvider({children}) {
   return (
     <UserProvider>
