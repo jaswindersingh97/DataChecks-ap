@@ -15,3 +15,4 @@ class LoginSchema(BaseModel):
 class UserResponseSchema(BaseModel):
     name: str
     email: str
+    id:int
