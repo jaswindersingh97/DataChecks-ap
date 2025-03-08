@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import Api from '../../Api/Api';
-import { useUser } from '../../context/userContext';
+import { useUser } from '../../context/UserContext';
 
 function NavBar() {
     const {user, setUser}= useUser();
