@@ -74,12 +74,19 @@ function PostsPage() {
             )}
           </div>
 
-          <button onClick={() => setModal((prev) => !prev)}>open modal</button>
           <Modal isOpen={modal} onClose={() => setModal(false)}>
             Inside Modal
           </Modal>
 
-          <button onClick={fetchMore} disabled={loading}>
+          <button 
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 cursor-pointer" 
+            onClick={() => setModal((prev) => !prev)}>
+          open modal</button>
+
+          <button 
+          className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 cursor-pointer ${loading && 'bg-gray-500 hover:bg-gray-500 cursor-progress'}`} 
+          onClick={fetchMore} 
+          disabled={loading}>
             {loading ? "Loading..." : "Load More"}
           </button>
         </div>
@@ -147,7 +154,7 @@ const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author })
   const Skeleton = () => {
     return (
       <div className="w-full px-10 md:w-1/2 lg:w-1/3">
-        <div className="mb-10 rounded-xl p-4 w-full animate-pulse hover:bg-sky-200">
+        <div className="mb-10 rounded-xl p-4 w-full animate-pulse hover:bg-gray-200">
           {/* Image Placeholder */}
           <img src={imagePlaceholder} alt="" className="w-full cover" />
           <br/>
