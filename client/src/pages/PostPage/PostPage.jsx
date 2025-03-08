@@ -1,21 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import Api from '../../Api/Api';
+import imagePlaceholder from './../../assets/Image-not-found.png'
+
 function PostPage() {
     const {postId} = useParams();
-    const post = {
-        date:"Dec 22, 2023",
-        CardTitle:"Meet AutoManage, the best AI management tools",
-        CardDescription:"Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-        image:"https://i.ibb.co/Cnwd4q6/image-01.jpg",
-        PostedBy:"Jaswinder Singh",
-        Avatar:"https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-        };
+    const [loading,setLoading] = useState(true);
+    const [data,setData] = useState([]);
+    const fetchData = async() =>{
+      const response = await Api({
+        endpoint:`/posts/${postId}`,
+        method:'get',
+      })
+      setData(response.data)
+      setLoading(false)
+    }    
+    useEffect(()=>{
+      fetchData();
+    },[])
   return (
-    <BlogPost image={post.image} date={post.date} PostedBy={post.PostedBy} Avatar={post.Avatar} CardDescription={post.CardDescription} CardTitle={post.CardTitle} />
+   <> {
+    loading ? <BlogPostSkeleton/>:
+      <BlogPost image={data.image_url} date={data.created_at} PostedBy={data.author} CardDescription={data.content} CardTitle={data.title} />
+    }</>
   )
 }
 
-const BlogPost = ({ image, CardTitle, date, PostedBy, Avatar, CardDescription }) => {
+const BlogPost = ({ image, CardTitle, date, PostedBy, CardDescription }) => {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Post Image */}
@@ -28,16 +39,17 @@ const BlogPost = ({ image, CardTitle, date, PostedBy, Avatar, CardDescription })
           {/* Title & Meta */}
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{CardTitle}</h1>
           <div className="flex items-center space-x-3 mb-6">
-            <img src={Avatar} alt={PostedBy} className="w-10 h-10 rounded-full" />
+            {/* <img src={Avatar} alt={PostedBy} className="w-10 h-10 rounded-full" /> */}
             <div>
-              <p className="text-gray-700 dark:text-gray-300">{PostedBy}</p>
+              <p className="text-gray-700 dark:text-gray-300">{PostedBy?.name}</p>
+              <p className="text-gray-700 dark:text-gray-300">{PostedBy?.email}</p>
               <p className="text-sm text-gray-500">{date}</p>
             </div>
           </div>
   
           {/* Blog Content */}
           <div className="text-lg text-gray-800 dark:text-gray-200 leading-relaxed space-y-6">
-            {CardDescription.split("\n").map((para, index) => (
+            {CardDescription?.split("\n").map((para, index) => (
               <p key={index}>{para}</p>
             ))}
           </div>
@@ -58,6 +70,35 @@ const BlogPost = ({ image, CardTitle, date, PostedBy, Avatar, CardDescription })
           </div>
         </section> */}
         </>
+      </div>
+    );
+  };
+  
+const BlogPostSkeleton = () => {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-pulse">
+        {/* Skeleton Image */}
+        <div className="w-full h-64 md:h-96 rounded-lg bg-gray-300 dark:bg-gray-700 mb-6"></div>
+  
+        {/* Skeleton Content */}
+        <article>
+          {/* Title & Meta */}
+          <div className="h-8 w-3/4 bg-gray-300 dark:bg-gray-700 rounded mb-4"></div>
+          <div className="flex items-center space-x-3 mb-6">
+            <div>
+              <div className="h-4 w-32 bg-gray-300 dark:bg-gray-700 rounded mb-1"></div>
+              <div className="h-4 w-48 bg-gray-300 dark:bg-gray-700 rounded mb-1"></div>
+              <div className="h-4 w-20 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            </div>
+          </div>
+  
+          {/* Skeleton Blog Content */}
+          <div className="space-y-4">
+            <div className="h-4 w-full bg-gray-300 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 w-5/6 bg-gray-300 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 w-4/5 bg-gray-300 dark:bg-gray-700 rounded"></div>
+          </div>
+        </article>
       </div>
     );
   };

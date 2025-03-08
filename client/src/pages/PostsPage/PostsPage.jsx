@@ -1,39 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import Modal from '../../components/Modal/Modal';
 import Api from '../../Api/Api';
+import imagePlaceholder from './../../assets/image.png'
+import {  useNavigate } from 'react-router-dom';
 function PostsPage() {
   const dummy = [1,2,3];
-  const [datas,setData] = useState([]);
+  const [data,setData] = useState([]);
+  const skip = 0;
+  const limit = 10;
+  const navigate = useNavigate();
   const fetchData = async() =>{
     const response = await Api({
-      endpoint:""
+      endpoint:`/posts?skip=${skip}&limit=${limit}`,
+      method:'get',
     })
+    console.log(response.data)
+    setData(response.data)
   }
   useEffect(()=>{
-
+    fetchData()
   },[])
-    const data = [
-        {
-        date:"Dec 22, 2023",
-        CardTitle:"Meet AutoManage, the best AI management tools",
-        CardDescription:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        image:"https://i.ibb.co/Cnwd4q6/image-01.jpg",
-        PostedBy:"Jaswinder Singh",
-        Avatar:"https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
-        },
-        // {
-        //     date:"Dec 22, 2023",
-        //     CardTitle:"Meet AutoManage, the best AI management tools",
-        //     CardDescription:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        //     image:"https://i.ibb.co/Cnwd4q6/image-01.jpg"
-        // },
-        // {
-        //     date:"Dec 22, 2023",
-        //     CardTitle:"Meet AutoManage, the best AI management tools",
-        //     CardDescription:"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        //     image:"https://i.ibb.co/Cnwd4q6/image-01.jpg"
-        // },
-]
     const [modal,setModal] =useState(false);
   return (
     <>
@@ -58,7 +44,7 @@ function PostsPage() {
 
           <div className="-mx-4 p-5 flex flex-wrap">
           {data?.length>0 ?data.map((item,index)=>(
-            <BlogCard PostedBy={item.PostedBy} Avatar={item.Avatar} image={item.image} date={item.date} CardTitle={item.CardTitle} CardDescription={item.CardDescription} key={index}/>
+            <BlogCard onClick={()=>navigate(`${item.id}`)} author={item.author} image={item.image_url} date={item.created_at} CardTitle={item.title} CardDescription={item.content} key={item.id}/>
           )):(
             <>
             {dummy.map((item)=>(
@@ -79,23 +65,33 @@ function PostsPage() {
 
 
 
-const BlogCard = ({ image, date, CardTitle, CardDescription , Avatar, PostedBy }) => {
+const BlogCard = ({ image, date, CardTitle, CardDescription ,onClick,  author }) => {
+    const formatDate = (dateString) => {
+      if (!dateString) return "Unknown date";
+      return new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(new Date(dateString));
+    };
+  
     return (
       <>
-        <div className="w-full  px-10 md:w-1/2 lg:w-1/3">
-          <div className="mb-10 rounded-xl hover:bg-sky-200 p-4  w-full">
+        <div onClick={onClick} className="w-full px-10 md:w-1/2 lg:w-1/3">
+          <div className="mb-10 rounded-xl cursor-pointer  hover:bg-gray-200 p-4  w-full">
             <div className="mb-8 overflow-hidden rounded">
-              <img src={image} alt="" className="w-full" />
+              <img src={image ? image : imagePlaceholder} alt="" className="w-full h-60" />
             </div>
             <div>
               {date && (
                 <span className="bg-sky-600 mb-5 inline-block rounded bg-primary px-4 py-1 text-center text-xs font-semibold leading-loose text-white">
-                  {date}
+                  {formatDate(date)}
                 </span>
               )}
               <div className='flex gap-2 items-center'>
-                <img src={Avatar} alt='profilePhoto' className='w-8 h-8 mb-3 rounded-full shadow-lg'/>
-                <h1 className='mb-1 text-xl font-medium text-gray-900 dark:text-white'>{PostedBy}</h1>
+                <h1 className='mb-1 text-l font-medium text-gray-900 dark:text-white'>{author.name}</h1>
+                <h1 className='mb-1 text-l font-medium text-sky-900 underline dark:text-white'>{author.email}</h1>
+
               </div>
               <h3>
                 <a
@@ -120,7 +116,9 @@ const BlogCard = ({ image, date, CardTitle, CardDescription , Avatar, PostedBy }
       <div className="w-full px-10 md:w-1/2 lg:w-1/3">
         <div className="mb-10 rounded-xl p-4 w-full animate-pulse hover:bg-sky-200">
           {/* Image Placeholder */}
-          <div className="mb-8 overflow-hidden rounded bg-gray-300 h-48 w-full dark:bg-gray-700"></div>
+          <img src={imagePlaceholder} alt="" className="w-full cover" />
+          <br/>
+          {/* <div className="mb-8 overflow-hidden rounded bg-gray-300 h-48 w-full dark:bg-gray-700"></div> */}
   
           <div>
             {/* Date Placeholder */}

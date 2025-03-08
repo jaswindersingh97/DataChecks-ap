@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Depends,UploadFile
 from sqlalchemy import desc,or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session , joinedload
 from app.models.post import Post
 from app.schemas.post import PostCreateSchema
 from app.utils.user_utils import get_current_user
@@ -21,10 +21,10 @@ def create_post(post_data: PostCreateSchema, db: Session, user=Depends(get_curre
     return new_post
 
 def get_posts(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(Post).order_by(desc(Post.created_at)).offset(skip).limit(limit).all()
+    return db.query(Post).options(joinedload(Post.author)).order_by(desc(Post.created_at)).offset(skip).limit(limit).all()
 
 def get_post(post_id: int, db: Session):
-    post = db.query(Post).filter(Post.id == post_id).first()
+    post = db.query(Post).options(joinedload(Post.author)).filter(Post.id == post_id).first()
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
@@ -57,7 +57,7 @@ def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Dep
 
 def search_posts_by_keyword(db: Session, keyword: str, skip: int = 0, limit: int = 10):
     # Use SQLAlchemy's `or_` to search in both title and content
-    query = db.query(Post).filter(
+    query = db.query(Post).options(joinedload(Post.author)).filter(
         or_(
             Post.title.ilike(f"%{keyword}%"),  # Case-insensitive search in title
             Post.content.ilike(f"%{keyword}%")  # Case-insensitive search in content
