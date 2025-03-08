@@ -32,9 +32,17 @@ def fetch_post(post_id: int, db: Session = Depends(get_db)):
     return get_post(post_id, db)
 
 # Update Post
-@post_router.put("/{post_id}")
-def modify_post(post_id: int, post_data: PostCreateSchema, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    return update_post(post_id, post_data, db, user)
+@post_router.put("/{post_id}",response_model=PostResponseSchema)
+def modify_post(
+    post_id: int,
+    title: str = Form(...),
+    content: str = Form(...),
+    file: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    user=Depends(get_current_user)
+):
+    post_data = PostCreateSchema(title=title, content=content)
+    return update_post(post_id, post_data, db, user,file)
 
 # Delete Post
 @post_router.delete("/{post_id}")

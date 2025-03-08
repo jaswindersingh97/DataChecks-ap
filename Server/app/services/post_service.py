@@ -38,7 +38,7 @@ def delete_post(post_id: int, db: Session, user=Depends(get_current_user)):
     db.commit()
     return {"message": "Post deleted"}
 
-def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Depends(get_current_user)):
+def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Depends(get_current_user),file: UploadFile = None):
     post = db.query(Post).filter(Post.id == post_id, Post.created_by == user.id).first()
     
     if not post:
@@ -46,7 +46,13 @@ def update_post(post_id: int, post_data: PostCreateSchema, db: Session, user=Dep
     
     post.title = post_data.title
     post.content = post_data.content
+    if file:
+        print("File received:", file.filename)
+        new_image_url = upload_image_to_cloudinary(file)
+        print("New image URL:", new_image_url)    
+        if post.image_url:
+            pass  
+        post.image_url = new_image_url
     db.commit()
     db.refresh(post)
-    
     return post
