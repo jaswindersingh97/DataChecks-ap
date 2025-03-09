@@ -14,7 +14,6 @@ function PostsPage() {
   const [data, setData] = useState([]);
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(false);
-  const isFirstRender = useRef(true);
   const navigate = useNavigate();
   const [modalForm,setModalForm] = useState(null);
   const [modal, setModal] = useState(false);
@@ -165,10 +164,7 @@ function PostsPage() {
   };
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+
     fetchData(skip);
   }, [skip]);
 
@@ -178,7 +174,7 @@ function PostsPage() {
 
   return (
     <>
-    {/* <NavBar/> */}
+    <NavBar/>
       <section className="bg-white p-10 pb-10 pt-20 lg:pb-20 lg:pt-[120px]">
         <div className="container">
           <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
