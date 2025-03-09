@@ -178,7 +178,7 @@ function PostsPage() {
 
   return (
     <>
-    <NavBar/>
+    {/* <NavBar/> */}
       <section className="bg-white p-10 pb-10 pt-20 lg:pb-20 lg:pt-[120px]">
         <div className="container">
           <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">
