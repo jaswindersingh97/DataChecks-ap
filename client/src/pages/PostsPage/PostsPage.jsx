@@ -7,6 +7,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import { useUser } from "../../context/UserContext";
 import PostForm from "../../components/PostForm/PostForm";
 import { toast } from "react-toastify";
+import NavBar from "../../components/NavBar/NavBar";
 function PostsPage() {
   const {user} = useUser()
   const dummy = [1, 2, 3];
@@ -177,6 +178,7 @@ function PostsPage() {
 
   return (
     <>
+    <NavBar/>
       <section className="bg-white p-10 pb-10 pt-20 lg:pb-20 lg:pt-[120px]">
         <div className="container">
           <div className="mx-auto mb-[60px] max-w-[510px] text-center lg:mb-20">

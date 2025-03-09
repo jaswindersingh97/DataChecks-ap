@@ -3,7 +3,6 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 const ProtectedRoutes = ({ element, isPublic = false }) => {
     const token = localStorage.getItem('token'); 
-    const location = useLocation(); 
 
     if (isPublic && token) {
         const from = '/posts';

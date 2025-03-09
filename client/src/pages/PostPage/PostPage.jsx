@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Api from '../../Api/Api';
 import imagePlaceholder from "./../../assets/image.png";
+import NavBar from '../../components/NavBar/NavBar';
 
 
 function PostPage() {
@@ -28,7 +29,8 @@ function PostPage() {
 }
 
 const BlogPost = ({ image, CardTitle, date, PostedBy, CardDescription }) => {
-    return (
+    return (<>
+      <NavBar/>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Post Image */}
         <div className="w-full h-64 md:h-96 rounded-lg overflow-hidden mb-6">
@@ -72,6 +74,7 @@ const BlogPost = ({ image, CardTitle, date, PostedBy, CardDescription }) => {
         </section> */}
         </>
       </div>
+      </>
     );
   };
   

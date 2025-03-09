@@ -17,10 +17,8 @@ function App() {
         <Route path='/' element={<LandingPage/>}/>
         <Route path='/SignIn' element={<ProtectedRoutes element={<SignIn/>} isPublic={true}/>} />
         <Route path='/register' element={<ProtectedRoutes element={<Register/>} isPublic={true}/>}/>
-        <Route path='/posts' element={<WithNavBar/>}>
-          <Route index element={<ProtectedRoutes element={<PostsPage/>} isPublic={false}/>}/>
-          <Route path=':postId' element={<ProtectedRoutes element={<PostPage/>} isPublic={false}/>}/>
-        </Route>
+        <Route path='/posts' element={<ProtectedRoutes element={<PostsPage/>} isPublic={false}/>}/>
+        <Route path='/posts/:postId' element={<ProtectedRoutes element={<PostPage/>} isPublic={false}/>}/>
         
       </Routes>
     </BrowserRouter>
